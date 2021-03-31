@@ -29,7 +29,7 @@ public class App {
 
             //Affichage du menu tant que l'utilisateur ne quitte pas le programme
             do {
-                //On affiche le menu de l'application de puis la BDD
+                //On affiche le menu de l'application depuis la BDD
                 //A revoir car obligé de créer un objet
                 Menu menu = new Menu(0,"");
                 menu.showMenu(connection);
@@ -80,8 +80,6 @@ public class App {
             String sql = "select p.nom as nom_plat, SUM(p.prix_unitaire * pf.quantite) as chiffre_affaire from factures f\n" +
                     "join plats_facture pf on f.id_facture = pf.id_facture\n" +
                     "join plats p on p.id_plat = pf.id_plat\n" +
-                    "join tables t on t.id_table = f.id_table\n" +
-                    "--WHERE s.nom LIKE 'Simon'\n" +
                     "GROUP BY p.nom\n" +
                     "ORDER BY chiffre_affaire DESC";
             resultSet = statement.executeQuery(sql);
@@ -104,10 +102,10 @@ public class App {
         ResultSet resultSet = null;
         try {
             statement = connect.createStatement();
+            //Requête SQL
             String sql = "select t.nom, SUM(p.prix_unitaire * pf.quantite) as chiffre_affaire from factures f\n" +
                     "join plats_facture pf on f.id_facture = pf.id_facture\n" +
                     "join plats p on p.id_plat = pf.id_plat\n" +
-                    "join serveurs s on s.id_serveur = f.id_serveur\n" +
                     "join tables t on t.id_table = f.id_table\n" +
                     "GROUP BY t.nom\n" +
                     "ORDER BY chiffre_affaire DESC;";
