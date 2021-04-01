@@ -1,11 +1,8 @@
 package co.simplon.restaurant;
 
-import co.simplon.restaurant.model.Menu;
-import co.simplon.restaurant.model.Plat;
+import co.simplon.restaurant.model.*;
 
 import java.sql.*;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Scanner;
 
 public class App {
@@ -30,9 +27,7 @@ public class App {
             //Affichage du menu tant que l'utilisateur ne quitte pas le programme
             do {
                 //On affiche le menu de l'application depuis la BDD
-                //A revoir car obligé de créer un objet
-                Menu menu = new Menu(0,"");
-                menu.showMenu(connection);
+                Menu.showMenu(connection);
 
                 //Saisie utilisateur dans userInput
                 int userInput;
@@ -127,77 +122,45 @@ public class App {
         System.out.println("Saisir une facture:");
         System.out.println("##################################");
 
-
-        Statement statement = null;
-        ResultSet resultSet = null;
         try {
-            statement = connect.createStatement();
-
             //Affichage des tables
-            resultSet = statement.executeQuery("SELECT * from tables ORDER BY id_table");
-            while (resultSet.next()) {
-                System.out.println(resultSet.getString("id_table") + "- " + resultSet.getString("nom"));
-            }
-            System.out.println("Choisissez une table:");
+            Table.listTables(connect);
             int tableChoice = scan.nextInt();
             scan.nextLine();
+
             //Affichage de serveurs
-            resultSet = statement.executeQuery("SELECT * from serveurs ORDER BY id_serveur");
-            while (resultSet.next()) {
-                System.out.println(resultSet.getString("id_serveur") + "- " + resultSet.getString("prenom") + " " + resultSet.getString("nom"));
-            }
-            System.out.println("Choisissez un.e serveur.se:");
+            Serveur.listServeur(connect);
             int serveurChoice = scan.nextInt();
             scan.nextLine();
 
-            //Création de la facture avec le numéro de Table et le numéro de serveur
-            String sql = "INSERT INTO factures (id_table, id_serveur) VALUES (" + tableChoice +"," + serveurChoice + ");";
-            System.out.println(sql);
-            statement.execute(sql);
+            //Création de la facture avec l'ID de Table et l'Id de serveur
+            //Méthode saveFacture dans la classe facture qui renvoi l'id de la facture créée
+            int actualInvoice = Facture.saveFacture(connect, tableChoice, serveurChoice);
 
-            //Récupération de l'identifiant de la facture
-            resultSet = statement.executeQuery("select currval('factures_id_facture_seq') as id");
-            resultSet.next();
-            int actualInvoice = resultSet.getInt("id");
-
-            System.out.println("id Facture : " + actualInvoice);
-
-
-            //Enregistrement des plat de la facture courant
-            //Affichage des plats
-            resultSet = statement.executeQuery("SELECT * from plats ORDER BY id_plat");
-
-            while (resultSet.next()) {
-                System.out.println(resultSet.getString("id_plat") + "- " + resultSet.getString("nom"));
-            }
-            System.err.println("0- Fin de saisie");
-            System.out.println("##########################");
-
-            //Enregistrement des plats (saisie utilisateur, stockage dans une HashMap
+            //Enregistrement des plats (saisie utilisateur)
             boolean userInput = true;
             do{
+                //Affichage des plats à chaque saisie - Arrêt en tapant 0
+                Plat.listPlats(connect);
+
                 System.out.println("Choisissez un plat");
                 int inputIdPlat = scan.nextInt();
                 scan.nextLine();
+                //Si la saisie est égale à 0 alors arrêt de la saisie
                 if(inputIdPlat != 0){
                     System.out.println("Quelle quantité");
                     int inputQuantity = scan.nextInt();
                     scan.nextLine();
 
                     //Enregistrement du plat pour la facture en cours
-                    sql = "INSERT INTO plats_facture (id_facture, id_plat, quantite) VALUES (" + actualInvoice + ", " + inputIdPlat + ", " + inputQuantity + ")";
-                    System.out.println(sql);
-                    statement.execute(sql);
+                    Plat.savePlat(connect,actualInvoice, inputIdPlat, inputQuantity);
                 }
                 else {
+                    //Sinon arrêt de la saisie
                     userInput = false;
                 }
 
             } while (userInput);
-
-
-            resultSet.close();
-            statement.close();
 
         } catch (SQLException throwables) {
             throwables.printStackTrace();

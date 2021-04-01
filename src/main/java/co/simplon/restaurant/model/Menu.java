@@ -16,7 +16,12 @@ public class Menu {
         this.title = title;
     }
 
-    public void showMenu(Connection connect){
+    @Override
+    public String toString() {
+        return this.id + "- " + this.title;
+    }
+
+    public static void showMenu(Connection connect){
         //Requête SQL
         //ArrayList<Menu> listMenu = new ArrayList<Menu>();
 
@@ -32,7 +37,8 @@ public class Menu {
             System.out.println();
             System.out.println("Menu Restaurant:");
             while (resultSet.next()) {
-                System.out.println(resultSet.getString("id_menu") + "- " + resultSet.getString("title"));
+                Menu menuEntry = new Menu(resultSet.getInt("id_menu"), resultSet.getString("title"));
+                System.out.println(menuEntry.toString());
             }
 //On laisse un espace pour réafficher le menu
             System.out.println("#######################################");
