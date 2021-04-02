@@ -46,6 +46,18 @@ public class App {
                     case 3:
                         bestPlat(connection);
                         break;
+                    case 4:
+                        Plat.listDish(connection, false);
+                        break;
+                    case 5:
+                        Plat.addDish(scan, connection);
+                        break;
+                    case 6:
+                        Plat.updateDish(scan, connection);
+                        break;
+                    case 7:
+                        Plat.removeDish(scan, connection);
+                        break;
                     default: {
                         running = false;
                         break;
@@ -141,19 +153,19 @@ public class App {
             boolean userInput = true;
             do{
                 //Affichage des plats à chaque saisie - Arrêt en tapant 0
-                Plat.listPlats(connect);
+                Plat.listDish(connect, true);
 
                 System.out.println("Choisissez un plat");
                 int inputIdPlat = scan.nextInt();
                 scan.nextLine();
                 //Si la saisie est égale à 0 alors arrêt de la saisie
                 if(inputIdPlat != 0){
-                    System.out.println("Quelle quantité");
+                    System.out.println("Quantité consommée:");
                     int inputQuantity = scan.nextInt();
                     scan.nextLine();
 
                     //Enregistrement du plat pour la facture en cours
-                    Plat.savePlat(connect,actualInvoice, inputIdPlat, inputQuantity);
+                    Plat.saveInvoiceDish(connect,actualInvoice, inputIdPlat, inputQuantity);
                 }
                 else {
                     //Sinon arrêt de la saisie

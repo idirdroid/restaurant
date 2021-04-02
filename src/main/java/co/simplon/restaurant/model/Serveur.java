@@ -19,18 +19,19 @@ public class Serveur {
         this.prenom = prenom;
     }
 
-    //Fonction To String
+    //Méthode To String
     @Override
     public String toString() {
         return this.idServeur + "- " + this.nom;
     }
 
-    //Fonction Lister les tables
+    //Méthode Lister les Serveurs
     public static List<Serveur> listServeur(Connection connect) throws SQLException {
         List<Serveur> listServeurs = new ArrayList<>();
         Statement statement = connect.createStatement();
-        ResultSet result = statement.executeQuery("SELECT * FROM serveurs");
+        ResultSet result = statement.executeQuery("SELECT * FROM serveurs ORDER BY id_serveur ASC");
 
+        //On parcours le résultat de la requête pour en créer des objets
         while(result.next()){
             Serveur tempServeur = new Serveur(result.getInt("id_serveur"),result.getString("nom"),result.getString("prenom"));
             listServeurs.add(tempServeur);

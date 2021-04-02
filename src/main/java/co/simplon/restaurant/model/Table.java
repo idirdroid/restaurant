@@ -20,18 +20,19 @@ public class Table {
         this.nbPlaces = nbPlaces;
     }
 
-    //Fonction To String
+    //Méthode To String
     @Override
     public String toString() {
         return this.idTable + "- " + this.name;
     }
 
-    //Fonction Lister les tables
+    //Méthode Lister les tables
     public static List<Table> listTables(Connection connect) throws SQLException {
         List<Table> listTables = new ArrayList<>();
         Statement statement = connect.createStatement();
-        ResultSet result = statement.executeQuery("SELECT * FROM tables");
+        ResultSet result = statement.executeQuery("SELECT * FROM tables ORDER BY id_table ASC");
 
+        //On parcours le résultat de la requête pour en créer des objets
         while(result.next()){
             Table tempTable = new Table(result.getInt("id_table"),result.getString("nom"),result.getInt("nb_convives"));
             listTables.add(tempTable);

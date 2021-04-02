@@ -22,15 +22,12 @@ public class Facture {
 
         Statement statement = connect.createStatement();
         String sql = "INSERT INTO factures (id_table, id_serveur) VALUES (" + idtable +"," + idServeur + ");";
-        System.out.println(sql);
         statement.execute(sql);
 
         //Récupération de l'identifiant de la facture
         ResultSet result = statement.executeQuery("select currval('factures_id_facture_seq') as id");
         result.next();
         idFacture = result.getInt("id");
-
-        System.out.println("id Facture : " + idFacture);
 
         return idFacture;
     }
